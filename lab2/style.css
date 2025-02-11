@@ -1,0 +1,74 @@
+body {
+	background: url('background.jpg') no-repeat center center fixed;
+	background-size: cover;
+	color: #ffffff;
+	font-family: 'Courier New', monospace;
+	font-weight: lighter;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
+
+.container {
+	background: #101214;
+	padding: 20px;
+	border-radius: 10px;
+	text-align: center;
+}
+
+.result {
+	margin-left: 80px;
+	width: 250px;
+	height: 70px;
+	background: #3b4248;
+	border-radius: 15px;
+	text-align: right;
+	font-size: 2rem;
+	font-weight: bold;
+	padding-right: 10px;
+	color: #00ace2;
+}
+
+.my-btn {
+	width: 60px;
+	height: 60px;
+	background: #666;
+	border: none;
+	margin: 5px;
+	cursor: pointer;
+	font-size: 1.5rem;
+}
+
+.my-btn:hover {
+	background: #90d5cf;
+}
+
+.my-btn.primary {
+	background: #00ace2;
+}
+
+.my-btn.secondary {
+	background: #888;
+}
+
+.my-btn.execute {
+	width: 140px;
+}
+
+.footer {
+	margin-top: 20px;
+	font-size: 1rem;
+}
+
+.dropdown {
+	margin-top: 10px;
+}
+
+.highlight mark {
+	background-color: #00ace2;
+}
+
+.dark-theme {
+	background: #000;
+}
