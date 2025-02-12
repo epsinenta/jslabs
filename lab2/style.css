@@ -72,3 +72,7 @@ body {
 .dark-theme {
 	background: #000;
 }
+.alt-result-color {
+    background-color: #00ace2;
+    color: #000;
+}

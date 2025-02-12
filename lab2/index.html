@@ -10,7 +10,7 @@
 			<div>
 				<div>
 					<button id="btn_op_clear" class="my-btn secondary">C</button>
-					<button id="btn_op_sign" class="my-btn secondary">+/-</button>
+					<button id="btn_op_backspace" class="my-btn secondary">⌫</button>
 					<button id="btn_op_percent" class="my-btn secondary">%</button>
 					<button id="btn_op_div" class="my-btn primary">/</button>
 				</div>
@@ -34,11 +34,30 @@
 				</div>
 				<div>
 					<button id="btn_digit_0" class="my-btn">0</button>
+					<button id="btn_digit_000" class="my-btn">000</button>
 					<button id="btn_digit_dot" class="my-btn">.</button>
-					<button id="btn_op_equal" class="my-btn primary execute">=</button>
+					<button id="btn_op_sqrt" class="my-btn primary">√</button>
+				</div>
+				<div>
+					<button id="btn_op_square" class="my-btn secondary">x²</button>
+					<button id="btn_op_cube" class="my-btn secondary">x³</button>
+					<button id="btn_op_factorial" class="my-btn secondary">x!</button>
+					<button id="btn_op_minus_plus" class="my-btn primary">-/+</button>
 				</div>
 			</div>
+
+			<button id="resultColorToggle" class="my-btn secondary">☼</button>
 			<button id="themeToggle" class="my-btn secondary">☽</button>
+
+			<button id="btn_op_equal" class="my-btn primary execute">=</button>
+
+			<details>
+				<summary>Автор</summary>
+				<p>Бердников Николай Олегович ИУ5-45Б</p>
+			</details>
+			<p class="highlight">
+				Цель ЛР: <mark>знакомство</mark> с <mark>HTML</mark> и <mark>CSS</mark>.
+			</p>
 			<a
 				href="https://github.com/epsinenta?tab=repositories"
 				class="my-btn secondary"
@@ -50,21 +69,8 @@
 				<option>Опция 2</option>
 				<option>Опция 3</option>
 			</select>
-			<details>
-				<summary>Автор</summary>
-				<p>Бердников Николай Олегович ИУ5-45Б</p>
-			</details>
-			<p class="highlight">
-				Цель ЛР: <mark>знакомство</mark> с <mark>HTML</mark> и <mark>CSS</mark>.
-			</p>
 			<p class="footer">ЛР выполнена Бердниковым Николаем Олеговичем</p>
 		</div>
-		<script>
-			document
-				.getElementById('themeToggle')
-				.addEventListener('click', function () {
-					document.body.classList.toggle('dark-theme')
-				})
-		</script>
+		<script src="script.js"></script>
 	</body>
 </html>
