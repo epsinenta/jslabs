@@ -67,10 +67,10 @@ window.onload = function () {
 				expressionResult = +a * +b
 				break
 			case '+':
-				expressionResult = +a + +b
+				expressionResult = (+a + +b) % 13
 				break
 			case '-':
-				expressionResult = +a - +b
+				expressionResult = (+a - +b) % 13
 				break
 			case '/':
 				if (+b === 0) {
