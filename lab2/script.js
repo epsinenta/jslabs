@@ -3,6 +3,7 @@ window.onload = function () {
 	let b = ''
 	let expressionResult = ''
 	let selectedOperation = null
+	let isCyclicSum = false
 
 	const outputElement = document.getElementById('result')
 
@@ -56,7 +57,7 @@ window.onload = function () {
 	}
 
 	document.getElementById('btn_op_equal').onclick = function () {
-		if (a === '') return делаем
+		if (a === '') return
 
 		if (b === '') {
 			b = lastB || a
@@ -67,10 +68,14 @@ window.onload = function () {
 				expressionResult = +a * +b
 				break
 			case '+':
-				expressionResult = (+a + +b) % 13
+				if (isCyclicSum) {
+					expressionResult = (+a + +b) % 13
+				} else {
+					expressionResult = +a + +b
+				}
 				break
 			case '-':
-				expressionResult = (+a - +b) % 13
+				expressionResult = +a - +b
 				break
 			case '/':
 				if (+b === 0) {
@@ -154,8 +159,18 @@ window.onload = function () {
 			outputElement.innerHTML = a
 		}
 	}
+
 	document.getElementById('resultColorToggle').onclick = function () {
 		console.log('Смена цвета окна результата')
 		outputElement.classList.toggle('alt-result-color')
+	}
+
+	document.getElementById('btn_toggle_cyclic_sum').onclick = function () {
+		isCyclicSum = !isCyclicSum
+		alert(
+			`Циклическая сумма по модулю 13: ${
+				isCyclicSum ? 'Включена' : 'Выключена'
+			}`
+		)
 	}
 }
