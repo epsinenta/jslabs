@@ -167,10 +167,5 @@ window.onload = function () {
 
 	document.getElementById('btn_toggle_cyclic_sum').onclick = function () {
 		isCyclicSum = !isCyclicSum
-		alert(
-			`Циклическая сумма по модулю 13: ${
-				isCyclicSum ? 'Включена' : 'Выключена'
-			}`
-		)
 	}
 }
