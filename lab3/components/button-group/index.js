@@ -5,25 +5,42 @@ export class ButtonGroupComponent {
 
 	getHTML(data) {
 		return `
-            <div class="btn-group" role="group" aria-label="Basic mixed styles example">
-              <button type="button" class="btn btn-danger" id="click-danger-${data.id}">✗</button>
-              <button type="button" class="btn btn-success" id="click-success-${data.id}">✓</button>
-            </div>
-        `
+      <div class="btn-group mt-3" role="group" aria-label="Действия с чертежом">
+				<button type="button" 
+                class="btn" 
+                id="remove-${data.id}"
+                style="background-color: #3b4248; 
+                       border: 1px solid #00ace2;
+                       color: #00ace2;
+                       transition: all 0.3s ease;">
+            <i class="bi bi-trash"></i> Удалить
+        </button>
+        <button type="button" 
+                class="btn" 
+                id="analyze-${data.id}"
+                style="background-color: #00ace2; 
+                       border: 1px solid #3b4248;
+                       color: #ffffff;
+                       transition: all 0.3s ease;">
+            <i class="bi bi-calculator"></i> Анализ
+        </button>
+        
+      </div>
+    `
 	}
 
-	addListeners(data, listener, removeCardListener) {
+	addListeners(data, analyzeListener, removeListener) {
 		document
-			.getElementById(`click-success-${data.id}`)
-			.addEventListener('click', listener)
+			.getElementById(`analyze-${data.id}`)
+			.addEventListener('click', analyzeListener)
 		document
-			.getElementById(`click-danger-${data.id}`)
-			.addEventListener('click', removeCardListener)
+			.getElementById(`remove-${data.id}`)
+			.addEventListener('click', removeListener)
 	}
 
-	render(data, listener) {
+	render(data, analyzeListener, removeListener) {
 		const html = this.getHTML(data)
 		this.parent.insertAdjacentHTML('beforeend', html)
-		this.addListeners(data, listener)
+		this.addListeners(data, analyzeListener, removeListener)
 	}
 }
