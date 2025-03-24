@@ -14,7 +14,6 @@ export class BlueprintCardComponent {
         <div class="card-body-custom">
             <h5 class="card-title-custom">${data.title}</h5>
             <p class="card-text-custom">
-                <i></i> 
                 Элементов: ${data.elements.length}
             </p>
             ${this.carousel.getHTML(data)}
