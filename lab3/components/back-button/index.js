@@ -10,7 +10,6 @@ export class BackButtonComponent {
 	getHTML() {
 		return `
     <button id="back-button" class="btn-custom btn-primary">
-        <i class="bi bi-arrow-left"></i>
         Назад
     </button>`
 	}

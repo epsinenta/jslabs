@@ -145,6 +145,10 @@
 	color: #ffffff;
 }
 
+.btn-primary:hover {
+	background-color: #4ac0f2;
+}
+
 .btn-secondary {
 	background-color: #3b4248;
 	color: #00ace2;
