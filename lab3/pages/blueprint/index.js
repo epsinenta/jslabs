@@ -284,30 +284,33 @@ export class BlueprintPage {
 
 		const elements = this.blueprintElements.slice()
 
-		do {
+		while (elements.length > 0) {
 			const element = elements.shift()
 			const name = element.name
-
+	
 			const lowerCaseName = name.toLowerCase()
-
+	
 			const lettersArray = lowerCaseName.split('')
 			lettersArray.sort()
 			const sortedLetters = lettersArray.join('')
-
+	
 			if (anagramGroups.has(sortedLetters)) {
 				anagramGroups.get(sortedLetters).push(name)
 			} else {
 				anagramGroups.set(sortedLetters, [name])
 			}
-		} while (elements.length > 0)
-
+		} 
+	
 		let result = []
 		for (const group of anagramGroups.values()) {
 			if (group.length > 1) {
-				result.push(group.join(' = '))
+				group.sort()
+				result.push(group)
 			}
 		}
-
+		result.sort((a, b) => a[0] < b[0])
+		result = result.map(group => group.join(' = '))
+	
 		if (result.length > 0) {
 			return result.join(', ')
 		} else {
