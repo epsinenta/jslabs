@@ -167,7 +167,6 @@ export class BlueprintPage {
             <div class="carousel-container" id="carousel-container"></div>
             
             <div class="content-wrapper">
-                <!-- Детали элементов -->
                 <div class="details-card">
                     <div class="card-header">
                         <small>Детали элементов</small>
