@@ -5,11 +5,11 @@ import { AddButtonComponent } from '../../components/add-button/index.js'
 export class MainPage {
 	constructor(parent) {
 		this.parent = parent
-		this.data = this.getData()
+		this.blueprints = this.getBluePrints()
 		this.searchQuery = ''
 	}
 
-	getData() {
+	getBluePrints() {
 		return [
 			{
 				id: 1,
@@ -133,63 +133,63 @@ export class MainPage {
             </div>
         `
 	}
-	handleAddCard() {
-		if (this.data.length === 0) return
+	handleAddBluePrint() {
+		if (this.blueprints.length === 0) return
 
-		const firstCard = JSON.parse(JSON.stringify(this.data[0]))
+		const firstBluePrint = JSON.parse(JSON.stringify(this.blueprints[0]))
 
-		const newCard = {
-			...firstCard,
+		const newBluePrint = {
+			...firstBluePrint,
 			id: this.generateNewId(),
-			title: `${firstCard.title} (копия)`,
+			title: `${firstBluePrint.title} (копия)`,
 		}
 
-		this.data.push(newCard)
-		this.renderCard()
+		this.blueprints.push(newBluePrint)
+		this.renderBluePrint()
 	}
 
 	generateNewId() {
-		const ids = this.data.map(item => item.id)
+		const ids = this.blueprints.map(item => item.id)
 		return ids.length > 0 ? Math.max(...ids) + 1 : 1
 	}
 
 	handleSearchInput(event) {
 		this.searchQuery = event.target.value.toLowerCase().trim()
-		this.renderCard()
+		this.renderBluePrint()
 	}
-	getFilteredData() {
-		if (!this.searchQuery) return this.data
+	getFilteredBluePrints() {
+		if (!this.searchQuery) return this.blueprints
 
-		return this.data.filter(card => {
-			const inTitle = card.title.toLowerCase().includes(this.searchQuery)
-			const inElements = card.elements.some(element =>
+		return this.blueprints.filter(blueprint => {
+			const inTitle = blueprint.title.toLowerCase().includes(this.searchQuery)
+			const inElements = blueprint.elements.some(element =>
 				element.name.toLowerCase().includes(this.searchQuery)
 			)
 			return inTitle || inElements
 		})
 	}
-	renderCard() {
+	renderBluePrint() {
 		this.pageRoot.innerHTML = ''
-		const filteredData = this.getFilteredData()
+		const filteredBluePrints = this.getFilteredBluePrints()
 
-		filteredData.forEach(item => {
-			const blueprintCard = new BlueprintCardComponent(this.pageRoot)
-			blueprintCard.render(
+		filteredBluePrints.forEach(item => {
+			const blueprintBluePrint = new BlueprintCardComponent(this.pageRoot)
+			blueprintBluePrint.render(
 				item,
-				() => this.clickCard(item.id),
-				() => this.handleRemoveCard(item.id)
+				() => this.clickBluePrint(item.id),
+				() => this.handleRemoveBluePrint(item.id)
 			)
 		})
 	}
 
-	clickCard(cardId) {
-		const blueprintPage = new BlueprintPage(this.parent, cardId)
+	clickBluePrint(blueprintId) {
+		const blueprintPage = new BlueprintPage(this.parent, blueprintId)
 		blueprintPage.render()
 	}
 
-	handleRemoveCard(cardId) {
-		this.data = this.data.filter(item => item.id !== cardId)
-		this.renderCard()
+	handleRemoveBluePrint(blueprintId) {
+		this.blueprints = this.blueprints.filter(item => item.id !== blueprintId)
+		this.renderBluePrint()
 	}
 	render() {
 		this.parent.innerHTML = ''
@@ -197,10 +197,10 @@ export class MainPage {
 
 		const addButtonContainer = document.getElementById('add-button-container')
 		const addButton = new AddButtonComponent(addButtonContainer)
-		addButton.render(() => this.handleAddCard())
+		addButton.render(() => this.handleAddBluePrint())
 
 		const searchInput = document.getElementById('search-input')
 		searchInput.addEventListener('input', e => this.handleSearchInput(e))
-		this.renderCard()
+		this.renderBluePrint()
 	}
 }

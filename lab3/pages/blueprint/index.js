@@ -15,18 +15,18 @@ export class BlueprintPage {
 	constructor(parent, id) {
 		this.parent = parent
 		this.id = id
-		this.data = this.getData()
+		this.blueprints = this.getBluePrints()
 		this.blueprintElements = this.initBlueprintElements()
 	}
 
 	initBlueprintElements() {
-		return this.data.elements.map(
+		return this.blueprints.elements.map(
 			el =>
 				new BlueprintEntity(el.type, el.width, el.height, el.name, el.position)
 		)
 	}
 
-	getData() {
+	getBluePrints() {
 		const blueprints = [
 			{
 				id: 1,
@@ -140,7 +140,7 @@ export class BlueprintPage {
 	}
 
 	getHTML() {
-		const elementsList = this.data.elements
+		const elementsList = this.blueprints.elements
 			.map(
 				el => `
             <li class="details-item">
@@ -160,7 +160,7 @@ export class BlueprintPage {
             <div class="header">
                 <div id="back-button-container"></div>
                 <div class="header-center">
-                    <h4 class="header-title">${this.data.title}</h4>
+                    <h4 class="header-title">${this.blueprints.title}</h4>
                 </div>
                 <div></div>
             </div>
@@ -287,20 +287,20 @@ export class BlueprintPage {
 		while (elements.length > 0) {
 			const element = elements.shift()
 			const name = element.name
-	
+
 			const lowerCaseName = name.toLowerCase()
-	
+
 			const lettersArray = lowerCaseName.split('')
 			lettersArray.sort()
 			const sortedLetters = lettersArray.join('')
-	
+
 			if (anagramGroups.has(sortedLetters)) {
 				anagramGroups.get(sortedLetters).push(name)
 			} else {
 				anagramGroups.set(sortedLetters, [name])
 			}
-		} 
-	
+		}
+
 		let result = []
 		for (const group of anagramGroups.values()) {
 			if (group.length > 1) {
@@ -310,7 +310,7 @@ export class BlueprintPage {
 		}
 		result.sort((a, b) => a[0] < b[0])
 		result = result.map(group => group.join(' = '))
-	
+
 		if (result.length > 0) {
 			return result.join(', ')
 		} else {
@@ -333,6 +333,6 @@ export class BlueprintPage {
 
 		const carouselContainer = document.getElementById('carousel-container')
 		const carousel = new CaruselComponent(carouselContainer)
-		carousel.render(this.data)
+		carousel.render(this.blueprints)
 	}
 }
