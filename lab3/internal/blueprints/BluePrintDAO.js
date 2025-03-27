@@ -1,0 +1,104 @@
+const { BluePrintsRepository } = require('./BluePrintsRepository')
+
+class BluePrintDAO {
+	constructor(id, title, elements, src) {
+		this.id = id
+		this.title = title
+		this.elements = elements
+		this.src = src
+	}
+
+	static _validateId(id) {
+		const numberId = Number.parseInt(id)
+		if (Number.isNaN(numberId)) {
+			throw new Error('Invalid blueprint ID')
+		}
+	}
+
+	static _validate(blueprint) {
+		if (
+			!blueprint.id ||
+			!blueprint.title ||
+			!Array.isArray(blueprint.elements) ||
+			!Array.isArray(blueprint.src)
+		) {
+			throw new Error('Invalid blueprint structure')
+		}
+
+		this._validateId(blueprint.id)
+
+		blueprint.elements.forEach(element => {
+			if (
+				!element.type ||
+				typeof element.width !== 'number' ||
+				typeof element.height !== 'number' ||
+				!element.name ||
+				!element.position
+			) {
+				throw new Error('Invalid element structure')
+			}
+		})
+	}
+
+	static find() {
+		let blueprints = BluePrintsRepository.read()
+		return blueprints.map(bp => new this(bp.id, bp.title, bp.elements, bp.src))
+	}
+
+	static findById(id) {
+		this._validateId(id)
+		const blueprints = BluePrintsRepository.read()
+		const blueprint = blueprints.find(bp => bp.id === id)
+
+		if (!blueprint) throw new Error('Blueprint not found')
+
+		return new this(
+			blueprint.id,
+			blueprint.title,
+			blueprint.elements,
+			blueprint.src
+		)
+	}
+
+	static insert(blueprint) {
+		this._validate(blueprint)
+
+		const blueprints = BluePrintsRepository.read()
+		const updatedBlueprints = [...blueprints, blueprint]
+
+		BluePrintsRepository.write(updatedBlueprints)
+
+		return new this(
+			blueprint.id,
+			blueprint.title,
+			blueprint.elements,
+			blueprint.src
+		)
+	}
+
+	static delete(id) {
+		this._validateId(id)
+
+		const blueprints = BluePrintsRepository.read()
+		const filteredBlueprints = blueprints.filter(bp => bp.id !== id)
+
+		BluePrintsRepository.write(filteredBlueprints)
+
+		return filteredBlueprints.map(
+			bp => new this(bp.id, bp.title, bp.elements, bp.src)
+		)
+	}
+
+	toJSON() {
+		return {
+			id: this.id,
+			title: this.title,
+			elements: this.elements,
+			src: this.src,
+		}
+	}
+}
+
+module.exports = {
+	BluePrintDAO,
+}
