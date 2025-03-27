@@ -184,3 +184,19 @@
 	font-size: 14px;
 	margin-bottom: 24px;
 }
+#search-input {
+	max-width: 300px;
+	background-color: #2a2e32;
+	color: #e9ecef;
+	border: 1px solid #3d4348;
+	border-radius: 4px;
+	padding: 8px 12px;
+}
+
+#search-input::placeholder {
+	color: #6c757d;
+}
+
+#search-input:focus {
+	border-color: #4dabf7;
+}

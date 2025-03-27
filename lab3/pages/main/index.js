@@ -1,10 +1,12 @@
 import { BlueprintCardComponent } from '../../components/blueprint-card/index.js'
 import { BlueprintPage } from '../blueprint/index.js'
+import { AddButtonComponent } from '../../components/add-button/index.js'
 
 export class MainPage {
 	constructor(parent) {
 		this.parent = parent
 		this.data = this.getData()
+		this.searchQuery = ''
 	}
 
 	getData() {
@@ -116,12 +118,61 @@ export class MainPage {
 	}
 
 	getHTML() {
-		return `<div id="main-page" class="d-flex flex-wrap gap-3 p-3" style="background-color: #101214;"></div>`
+		return `
+            <div>
+                <div id="controls-container" class="p-3 d-flex gap-2 align-items-center">
+                    <input 
+                    type="text" 
+                    id="search-input" 
+                    class="form-control" 
+                    placeholder="Введите название чертежа"
+                >
+                    <div id="add-button-container"></div>
+                </div>
+                <div id="main-page" class="d-flex flex-wrap gap-3 p-3" style="background-color: #101214;"></div>
+            </div>
+        `
+	}
+	handleAddCard() {
+		if (this.data.length === 0) return
+
+		const firstCard = JSON.parse(JSON.stringify(this.data[0]))
+
+		const newCard = {
+			...firstCard,
+			id: this.generateNewId(),
+			title: `${firstCard.title} (копия)`,
+		}
+
+		this.data.push(newCard)
+		this.renderCard()
 	}
 
+	generateNewId() {
+		const ids = this.data.map(item => item.id)
+		return ids.length > 0 ? Math.max(...ids) + 1 : 1
+	}
+
+	handleSearchInput(event) {
+		this.searchQuery = event.target.value.toLowerCase().trim()
+		this.renderCard()
+	}
+	getFilteredData() {
+		if (!this.searchQuery) return this.data
+
+		return this.data.filter(card => {
+			const inTitle = card.title.toLowerCase().includes(this.searchQuery)
+			const inElements = card.elements.some(element =>
+				element.name.toLowerCase().includes(this.searchQuery)
+			)
+			return inTitle || inElements
+		})
+	}
 	renderCard() {
 		this.pageRoot.innerHTML = ''
-		this.data.forEach(item => {
+		const filteredData = this.getFilteredData()
+
+		filteredData.forEach(item => {
 			const blueprintCard = new BlueprintCardComponent(this.pageRoot)
 			blueprintCard.render(
 				item,
@@ -140,10 +191,16 @@ export class MainPage {
 		this.data = this.data.filter(item => item.id !== cardId)
 		this.renderCard()
 	}
-
 	render() {
 		this.parent.innerHTML = ''
 		this.parent.insertAdjacentHTML('beforeend', this.getHTML())
+
+		const addButtonContainer = document.getElementById('add-button-container')
+		const addButton = new AddButtonComponent(addButtonContainer)
+		addButton.render(() => this.handleAddCard())
+
+		const searchInput = document.getElementById('search-input')
+		searchInput.addEventListener('input', e => this.handleSearchInput(e))
 		this.renderCard()
 	}
 }
