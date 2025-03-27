@@ -167,6 +167,7 @@ export class BlueprintPage {
             <div class="carousel-container" id="carousel-container"></div>
             
             <div class="content-wrapper">
+                <!-- Детали элементов -->
                 <div class="details-card">
                     <div class="card-header">
                         <small>Детали элементов</small>
@@ -175,9 +176,142 @@ export class BlueprintPage {
                         ${elementsList}
                     </ul>
                 </div>
+                
+                <div class="analytics-card">
+                    <div class="card-header">
+                        <small>Анализ чертежа</small>
+                    </div>
+                    <div class="analytics-grid">
+                        <div class="analytics-item">
+                            <span>Сумма квадратов площадей объектов:</span>
+                            <strong>${this.calculateTotalSquaredArea()}</strong>
+                        </div>
+												
+                        <div class="analytics-item">
+                            <span>Диапазоны координат объектов:</span>
+                            <strong>${this.getDimensionRanges()}</strong>
+                        </div>
+                        <div class="analytics-item">
+                            <span>Среднее значение длины стороны объекта:</span>
+                            <strong>${this.calculateAverageElementSize()}</strong>
+                        </div>
+                        <div class="analytics-item">
+                            <span>Анаграммы названий объектов:</span>
+                            <strong>${this.findElementAnagrams()}</strong>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>`
+	}
+	calculateAverageElementSize() {
+		let totalDimensionsSum = 0
+		for (const element of this.blueprintElements) {
+			totalDimensionsSum += element.width
+			totalDimensionsSum += element.height
+		}
+		const averageSize = totalDimensionsSum / this.blueprintElements.length / 2
+		return averageSize.toFixed(2)
+	}
+
+	getDimensionRanges() {
+		const uniqueCoordinates = new Set()
+
+		for (let i = 0; i < this.blueprintElements.length; i++) {
+			const element = this.blueprintElements[i]
+			uniqueCoordinates.add(element.position.x)
+			uniqueCoordinates.add(element.position.y)
+		}
+
+		const sortedCoordinates = Array.from(uniqueCoordinates)
+
+		sortedCoordinates.sort((a, b) => a - b)
+
+		const coordinateRanges = []
+
+		let rangeStart = sortedCoordinates[0]
+
+		for (let i = 1; i < sortedCoordinates.length; i++) {
+			if (sortedCoordinates[i] - sortedCoordinates[i - 1] !== 1) {
+				let range
+				if (rangeStart === sortedCoordinates[i - 1]) {
+					range = `${rangeStart}`
+				} else {
+					range = `${rangeStart}-${sortedCoordinates[i - 1]}`
+				}
+				coordinateRanges.push(range)
+				rangeStart = sortedCoordinates[i]
+			}
+		}
+
+		let lastRange
+		if (rangeStart === sortedCoordinates[sortedCoordinates.length - 1]) {
+			lastRange = `${rangeStart}`
+		} else {
+			lastRange = `${rangeStart}-${
+				sortedCoordinates[sortedCoordinates.length - 1]
+			}`
+		}
+		coordinateRanges.push(lastRange)
+
+		let resultString = ''
+		for (let i = 0; i < coordinateRanges.length; i++) {
+			if (i > 0) {
+				resultString += ', '
+			}
+			resultString += coordinateRanges[i]
+		}
+
+		return resultString
+	}
+
+	calculateTotalSquaredArea() {
+		let totalSquaredArea = 0
+		this.blueprintElements.forEach(element => {
+			const elementArea = element.width * element.height
+			totalSquaredArea += Math.pow(elementArea, 2)
+		})
+		return totalSquaredArea.toFixed(2)
+	}
+
+	findElementAnagrams() {
+		const anagramGroups = new Map()
+
+		const elements = this.blueprintElements.slice()
+
+		while (elements.length > 0) {
+			const element = elements.shift()
+			const name = element.name
+
+			const lowerCaseName = name.toLowerCase()
+
+			const lettersArray = lowerCaseName.split('')
+			lettersArray.sort()
+			const sortedLetters = lettersArray.join('')
+
+			if (anagramGroups.has(sortedLetters)) {
+				anagramGroups.get(sortedLetters).push(name)
+			} else {
+				anagramGroups.set(sortedLetters, [name])
+			}
+		}
+
+		let result = []
+		for (const group of anagramGroups.values()) {
+			if (group.length > 1) {
+				group.sort()
+				result.push(group)
+			}
+		}
+		result.sort((a, b) => a[0] < b[0])
+		result = result.map(group => group.join(' = '))
+
+		if (result.length > 0) {
+			return result.join(', ')
+		} else {
+			return 'Анаграммы не найдены'
+		}
 	}
 
 	clickBack() {
