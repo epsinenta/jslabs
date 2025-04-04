@@ -3,12 +3,21 @@ const { BluePrintsService } = require('./BluePrintsService')
 class BluePrintsController {
 	static findBluePrints(req, res) {
 		try {
-			res.send(BluePrintsService.findBluePrints())
+			const filters = { ...req.query, ...req.params }
+			res.send(BluePrintsService.findBluePrints(filters))
 		} catch (err) {
 			res.status(400).send({ status: 'Bad Request', message: err.message })
 		}
 	}
-
+	static updateBluePrint(req, res) {
+		try {
+			const id = Number.parseInt(req.params.id)
+			const updatedData = req.body
+			res.send(BluePrintsService.updateBluePrint(id, updatedData))
+		} catch (err) {
+			res.status(400).send({ status: 'Bad Request', message: err.message })
+		}
+	}
 	static findBluePrintById(req, res) {
 		try {
 			const id = Number.parseInt(req.params.id)

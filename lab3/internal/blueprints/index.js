@@ -7,5 +7,6 @@ router.get('/', BluePrintsController.findBluePrints)
 router.get('/:id', BluePrintsController.findBluePrintById)
 router.post('/', BluePrintsController.addBluePrint)
 router.delete('/:id', BluePrintsController.deleteBluePrint)
+router.put('/:id', BluePrintsController.updateBluePrint)
 
 module.exports = router

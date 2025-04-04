@@ -40,15 +40,48 @@ class BluePrintDAO {
 		})
 	}
 
-	static find() {
+	static find(filters = {}) {
 		let blueprints = BluePrintsRepository.read()
+
+		if (filters.title) {
+			blueprints = blueprints.filter(bp =>
+				bp.title.toLowerCase().includes(filters.title.toLowerCase())
+			)
+		}
+
+		if (filters.id !== undefined) {
+			const id = Number(filters.id)
+			blueprints = blueprints.filter(bp => bp.id === id)
+		}
+
 		return blueprints.map(bp => new this(bp.id, bp.title, bp.elements, bp.src))
 	}
+	static update(id, updatedData) {
+		this._validateId(id)
 
+		const blueprints = BluePrintsRepository.read()
+		const index = blueprints.findIndex(bp => bp.id === id)
+
+		if (index === -1) throw new Error('Blueprint not found')
+
+		const updatedBlueprint = { ...blueprints[index], ...updatedData }
+		this._validate(updatedBlueprint)
+
+		blueprints[index] = updatedBlueprint
+		BluePrintsRepository.write(blueprints)
+
+		return new this(
+			updatedBlueprint.id,
+			updatedBlueprint.title,
+			updatedBlueprint.elements,
+			updatedBlueprint.src
+		)
+	}
 	static findById(id) {
+		const numberId = Number.parseInt(id)
 		this._validateId(id)
 		const blueprints = BluePrintsRepository.read()
-		const blueprint = blueprints.find(bp => bp.id === id)
+		const blueprint = blueprints.find(bp => bp.id === numberId)
 
 		if (!blueprint) throw new Error('Blueprint not found')
 
