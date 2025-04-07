@@ -161,16 +161,13 @@ export class MainPage {
 		if (!this.searchQuery) return this.blueprints
 
 		return this.blueprints.filter(blueprint => {
-			const inTitle = blueprint.title.toLowerCase().includes(this.searchQuery)
-			const inElements = blueprint.elements.some(element =>
-				element.name.toLowerCase().includes(this.searchQuery)
-			)
-			return inTitle || inElements
+			var inTitle = blueprint.title.toLowerCase().includes(this.searchQuery)
+			return inTitle
 		})
 	}
 	renderBluePrint() {
 		this.pageRoot.innerHTML = ''
-		const filteredBluePrints = this.getFilteredBluePrints()
+		var filteredBluePrints = this.getFilteredBluePrints()
 
 		filteredBluePrints.forEach(item => {
 			const blueprintBluePrint = new BlueprintCardComponent(this.pageRoot)
