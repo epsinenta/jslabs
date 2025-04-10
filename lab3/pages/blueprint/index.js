@@ -1,4 +1,4 @@
-import { BackButtonComponent } from '../../components/back-button/index.js'
+import ButtonComponent from '../../components/button/index.js'
 import { CaruselComponent } from '../../components/carusel/index.js'
 import { MainPage } from '../main/index.js'
 class BlueprintEntity {
@@ -155,18 +155,23 @@ export class BlueprintPage {
 
 		return `
     <div id="blueprint-page">
-        <div class="main-container">
-            <div class="header">
-                <div id="back-button-container"></div>
-                <div class="header-center">
-                    <h4 class="header-title">${this.blueprints.title}</h4>
+        <header class="main-header">
+            <div class="header-content">
+                <div class="logo-container">
+                    <img src="./static/images/logo.png" class="logo-image" alt="Логотип">
                 </div>
-                <div></div>
+                <div class="nav-buttons-container">
+                    <div id="add-button-container" class="nav-button-wrapper"></div>
+                    <div id="edit-button-container" class="nav-button-wrapper"></div>
+                </div>
             </div>
-            
-            <div class="carousel-container" id="carousel-container"></div>
-            
+        </header>
+        
+        <div class="main-container">
             <div class="content-wrapper">
+						<h2 class="blueprint-title">${this.blueprints.title}</h2>
+                <div class="carousel-container" id="carousel-container"></div>
+                
                 <div class="details-card">
                     <div class="card-header">
                         <small>Детали элементов</small>
@@ -185,7 +190,7 @@ export class BlueprintPage {
                             <span>Сумма квадратов площадей объектов:</span>
                             <strong>${this.calculateTotalSquaredArea()}</strong>
                         </div>
-												
+                                                
                         <div class="analytics-item">
                             <span>Диапазоны координат объектов:</span>
                             <strong>${this.getDimensionRanges()}</strong>
@@ -323,10 +328,25 @@ export class BlueprintPage {
 		const html = this.getHTML()
 		this.parent.insertAdjacentHTML('beforeend', html)
 
+		const logo = document.querySelector('.logo-image')
+		if (logo) {
+			logo.addEventListener('click', () => {
+				this.parent.innerHTML = ''
+				new MainPage(this.parent).render()
+			})
+		}
+		const addButtonContainer = document.getElementById('add-button-container')
+		const addButton = new ButtonComponent(addButtonContainer, 'Добавить')
+		addButton.render(() => this.handleAddBluePrint())
+
+		const editButtonContainer = document.getElementById('edit-button-container')
+		const editButton = new ButtonComponent(editButtonContainer, 'Изменить')
+		editButton.render(() => this.handleEditBluePrint())
+		/*
 		const backButtonContainer = document.getElementById('back-button-container')
 		const backButton = new BackButtonComponent(backButtonContainer)
 		backButton.render(this.clickBack.bind(this))
-
+		*/
 		const carouselContainer = document.getElementById('carousel-container')
 		const carousel = new CaruselComponent(carouselContainer)
 		carousel.render(this.blueprints)

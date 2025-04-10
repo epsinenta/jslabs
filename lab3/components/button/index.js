@@ -1,5 +1,6 @@
-export class AddButtonComponent {
-	constructor(parent) {
+export default class ButtonComponent {
+	constructor(parent, text) {
+		this.content = text
 		this.parent = parent
 	}
 
@@ -10,7 +11,7 @@ export class AddButtonComponent {
 	getHTML() {
 		return `
     <button id="back-button" class="btn-custom btn-primary">
-        Добавить
+			${this.content}
     </button>`
 	}
 

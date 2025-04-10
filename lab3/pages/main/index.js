@@ -1,6 +1,6 @@
 import { BlueprintCardComponent } from '../../components/blueprint-card/index.js'
 import { BlueprintPage } from '../blueprint/index.js'
-import { AddButtonComponent } from '../../components/add-button/index.js'
+import ButtonComponent from '../../components/button/index.js'
 
 export class MainPage {
 	constructor(parent) {
@@ -120,6 +120,17 @@ export class MainPage {
 	getHTML() {
 		return `
             <div>
+						<header class="main-header">
+                <div class="header-content">
+                    <div class="logo-container">
+                        <img src="./static/images/logo.png" class="logo-image" alt="Логотип">
+                    </div>
+                    <div class="nav-buttons-container">
+                        <div id="add-button-container" class="nav-button-wrapper"></div>
+                        <div id="edit-button-container" class="nav-button-wrapper"></div>
+                    </div>
+                </div>
+            </header>
                 <div id="controls-container" class="p-3 d-flex gap-2 align-items-center">
                     <input 
                     type="text" 
@@ -127,7 +138,7 @@ export class MainPage {
                     class="form-control" 
                     placeholder="Введите название чертежа"
                 >
-                    <div id="add-button-container"></div>
+                    
                 </div>
                 <div id="main-page" class="d-flex flex-wrap gap-3 p-3" style="background-color: #101214;"></div>
             </div>
@@ -147,7 +158,7 @@ export class MainPage {
 		this.blueprints.push(newBluePrint)
 		this.renderBluePrint()
 	}
-
+	handleEditBluePrint() {}
 	generateNewId() {
 		const ids = this.blueprints.map(item => item.id)
 		return ids.length > 0 ? Math.max(...ids) + 1 : 1
@@ -162,10 +173,7 @@ export class MainPage {
 
 		return this.blueprints.filter(blueprint => {
 			const inTitle = blueprint.title.toLowerCase().includes(this.searchQuery)
-			const inElements = blueprint.elements.some(element =>
-				element.name.toLowerCase().includes(this.searchQuery)
-			)
-			return inTitle || inElements
+			return inTitle
 		})
 	}
 	renderBluePrint() {
@@ -195,9 +203,21 @@ export class MainPage {
 		this.parent.innerHTML = ''
 		this.parent.insertAdjacentHTML('beforeend', this.getHTML())
 
+		const logo = document.querySelector('.logo-image')
+		if (logo) {
+			logo.addEventListener('click', () => {
+				this.parent.innerHTML = ''
+				new MainPage(this.parent).render()
+			})
+		}
+
 		const addButtonContainer = document.getElementById('add-button-container')
-		const addButton = new AddButtonComponent(addButtonContainer)
+		const addButton = new ButtonComponent(addButtonContainer, 'Добавить')
 		addButton.render(() => this.handleAddBluePrint())
+
+		const editButtonContainer = document.getElementById('edit-button-container')
+		const editButton = new ButtonComponent(editButtonContainer, 'Изменить')
+		editButton.render(() => this.handleEditBluePrint())
 
 		const searchInput = document.getElementById('search-input')
 		searchInput.addEventListener('input', e => this.handleSearchInput(e))
