@@ -10,6 +10,25 @@ export class BlueprintCardComponent {
 
 	getHTML(data) {
 		return `
+		<style>
+  .button-group-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .btn-group {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .btn-group .btn {
+    flex: 1;
+    text-align: center;
+  }
+</style>
     <div class="blueprint-card" data-id="${data.id}">
         <div class="card-body-custom">
             <h5 class="card-title-custom">${data.title}</h5>

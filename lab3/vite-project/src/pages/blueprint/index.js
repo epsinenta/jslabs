@@ -1,9 +1,8 @@
 import ButtonComponent from '../../components/button/index.js'
 import { CaruselComponent } from '../../components/carusel/index.js'
 import { MainPage } from '../main/index.js'
-import { ajax } from '../../modules/ajax.js'
 import { blueprintUrls } from '../../modules/bluePrintUrls.js'
-import { elements } from '../../db/elementsMap.js'
+import { elements } from '../../elementsMap.js'
 import { BlueprintEditPage } from '../editor/index.js'
 
 class BlueprintEntity {
@@ -25,8 +24,10 @@ export class BlueprintPage {
 		this.getBluePrints()
 	}
 
-	getBluePrints() {
-		ajax.get(blueprintUrls.getBluePrintById(this.id), data => {
+	async getBluePrints() {
+		try {
+			const res = await fetch(blueprintUrls.getBluePrintById(this.id))
+			const data = await res.json()
 			const blueprint = data.find(bp => bp.id === parseInt(this.id))
 			this.blueprints = blueprint
 			this.blueprintElements = blueprint.elements
@@ -34,7 +35,9 @@ export class BlueprintPage {
 				.filter(el => el != null)
 
 			this.renderPageContent()
-		})
+		} catch (err) {
+			console.error('Ошибка при загрузке чертежа:', err)
+		}
 	}
 
 	initBlueprintElements() {
@@ -68,7 +71,7 @@ export class BlueprintPage {
         <header class="main-header">
             <div class="header-content">
                 <div class="logo-container">
-                    <img src="./static/images/logo.png" class="logo-image" alt="Логотип">
+                    <img src="/images/logo.png" class="logo-image" alt="Логотип">
                 </div>
                 <div class="nav-buttons-container">
                     <div id="add-button-container" class="nav-button-wrapper"></div>

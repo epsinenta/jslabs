@@ -1,2 +1,4 @@
 node_modules/
 package-lock.json
+vite-project/dist
+vite-project/node_modules

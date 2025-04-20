@@ -1,7 +1,6 @@
 import { BlueprintCardComponent } from '../../components/blueprint-card/index.js'
 import { BlueprintPage } from '../blueprint/index.js'
 import ButtonComponent from '../../components/button/index.js'
-import { ajax } from '../../modules/ajax.js'
 import { blueprintUrls } from '../../modules/bluePrintUrls.js'
 import { BlueprintEditPage } from '../editor/index.js'
 
@@ -12,10 +11,14 @@ export class MainPage {
 		this.searchQuery = ''
 	}
 
-	getBluePrints() {
-		ajax.get(blueprintUrls.getBluePrints(), data => {
+	async getBluePrints() {
+		try {
+			const res = await fetch(blueprintUrls.getBluePrints())
+			const data = await res.json()
 			this.renderData(data)
-		})
+		} catch (err) {
+			console.error('Ошибка при получении чертежей:', err)
+		}
 	}
 
 	get pageRoot() {
@@ -28,7 +31,7 @@ export class MainPage {
 						<header class="main-header">
                 <div class="header-content">
                     <div class="logo-container">
-                        <img src="./static/images/logo.png" class="logo-image" alt="Логотип">
+                        <img src="/images/logo.png" class="logo-image" alt="Логотип">
                     </div>
                     <div class="nav-buttons-container">
                         <div id="add-button-container" class="nav-button-wrapper"></div>
@@ -57,16 +60,19 @@ export class MainPage {
 		return ids.length > 0 ? Math.max(...ids) + 1 : 1
 	}
 
-	handleSearchInput(event) {
+	async handleSearchInput(event) {
 		this.searchQuery = event.target.value.toLowerCase().trim()
-
 		const query = this.searchQuery
 			? `?title=${encodeURIComponent(this.searchQuery)}`
 			: ''
 
-		ajax.get(`${blueprintUrls.getBluePrints()}${query}`, data => {
+		try {
+			const res = await fetch(`${blueprintUrls.getBluePrints()}${query}`)
+			const data = await res.json()
 			this.renderData(data)
-		})
+		} catch (err) {
+			console.error('Ошибка при фильтрации:', err)
+		}
 	}
 
 	renderData(items) {
@@ -86,10 +92,15 @@ export class MainPage {
 		blueprintPage.render()
 	}
 
-	handleRemoveBluePrint(blueprintId) {
-		ajax.delete(blueprintUrls.getBluePrintById(blueprintId), () => {
+	async handleRemoveBluePrint(blueprintId) {
+		try {
+			await fetch(blueprintUrls.getBluePrintById(blueprintId), {
+				method: 'DELETE',
+			})
 			this.getBluePrints()
-		})
+		} catch (err) {
+			console.error('Ошибка при удалении:', err)
+		}
 	}
 	render() {
 		this.parent.innerHTML = ''
