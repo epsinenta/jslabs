@@ -26,18 +26,6 @@ class BluePrintDAO {
 		}
 
 		this._validateId(blueprint.id)
-
-		blueprint.elements.forEach(element => {
-			if (
-				!element.type ||
-				typeof element.width !== 'number' ||
-				typeof element.height !== 'number' ||
-				!element.name ||
-				!element.position
-			) {
-				throw new Error('Invalid element structure')
-			}
-		})
 	}
 
 	static find(filters = {}) {

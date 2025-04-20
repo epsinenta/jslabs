@@ -1,6 +1,11 @@
 import ButtonComponent from '../../components/button/index.js'
 import { CaruselComponent } from '../../components/carusel/index.js'
 import { MainPage } from '../main/index.js'
+import { ajax } from '../../modules/ajax.js'
+import { blueprintUrls } from '../../modules/bluePrintUrls.js'
+import { elements } from '../../db/elementsMap.js'
+import { BlueprintEditPage } from '../editor/index.js'
+
 class BlueprintEntity {
 	constructor(type, width, height, name, position) {
 		this.type = type
@@ -15,123 +20,28 @@ export class BlueprintPage {
 	constructor(parent, id) {
 		this.parent = parent
 		this.id = id
-		this.blueprints = this.getBluePrints()
-		this.blueprintElements = this.initBlueprintElements()
-	}
-
-	initBlueprintElements() {
-		return this.blueprints.elements.map(
-			el =>
-				new BlueprintEntity(el.type, el.width, el.height, el.name, el.position)
-		)
+		this.blueprints = null
+		this.blueprintElements = []
+		this.getBluePrints()
 	}
 
 	getBluePrints() {
-		const blueprints = [
-			{
-				id: 1,
-				title: 'Секционная панель',
-				elements: [
-					{
-						type: 'прямоугольник',
-						width: 15,
-						height: 5,
-						name: 'Секция',
-						position: { x: 10, y: 11 },
-					},
-					{
-						type: 'прямоугольник',
-						width: 6,
-						height: 16,
-						name: 'Ксиеця',
-						position: { x: 48, y: 50 },
-					},
-					{
-						type: 'прямоугольник',
-						width: 7,
-						height: 17,
-						name: 'Основа',
-						position: { x: 51, y: 52 },
-					},
-				],
-				src: [
-					'./static/images/panel1.png',
-					'./static/images/panel2.png',
-					'./static/images/panel3.png',
-				],
-			},
-			{
-				id: 2,
-				title: 'Модульный блок',
-				elements: [
-					{
-						type: 'прямоугольник',
-						width: 25,
-						height: 10,
-						name: 'Модуль',
-						position: { x: 21, y: 20 },
-					},
-					{
-						type: 'прямоугольник',
-						width: 11,
-						height: 26,
-						name: 'Льмоду',
-						position: { x: 41, y: 40 },
-					},
-					{
-						type: 'прямоугольник',
-						width: 12,
-						height: 27,
-						name: 'дуМоль',
-						position: { x: 60, y: 61 },
-					},
-				],
-				src: ['./static/images/module1.png', './static/images/module2.png'],
-			},
-			{
-				id: 3,
-				title: 'Регулируемая рама',
-				elements: [
-					{
-						type: 'прямоугольник',
-						width: 35,
-						height: 8,
-						name: 'Рама',
-						position: { x: 33, y: 34 },
-					},
-					{
-						type: 'прямоугольник',
-						width: 9,
-						height: 36,
-						name: 'Арма',
-						position: { x: 35, y: 36 },
-					},
-					{
-						type: 'прямоугольник',
-						width: 10,
-						height: 37,
-						name: 'Марр',
-						position: { x: 54, y: 53 },
-					},
-					{
-						type: 'прямоугольник',
-						width: 11,
-						height: 38,
-						name: 'Мрра',
-						position: { x: 55, y: 56 },
-					},
-				],
-				src: [
-					'./static/images/frame1.png',
-					'./static/images/frame2.png',
-					'./static/images/frame3.png',
-				],
-			},
-		]
+		ajax.get(blueprintUrls.getBluePrintById(this.id), data => {
+			const blueprint = data.find(bp => bp.id === parseInt(this.id))
+			this.blueprints = blueprint
+			this.blueprintElements = blueprint.elements
+				.map(id => elements[id])
+				.filter(el => el != null)
 
-		return (
-			blueprints.find(blueprint => blueprint.id === Number(this.id)) ||
-			blueprints[0]
+			this.renderPageContent()
+		})
+	}
+
+	initBlueprintElements() {
+		if (!this.blueprints || !this.blueprints.elements) return []
+		return this.blueprintElements.map(
+			el =>
+				new BlueprintEntity(el.type, el.width, el.height, el.name, el.position)
 		)
 	}
 
@@ -140,7 +50,7 @@ export class BlueprintPage {
 	}
 
 	getHTML() {
-		const elementsList = this.blueprints.elements
+		const elementsList = this.blueprintElements
 			.map(
 				el => `
             <li class="details-item">
@@ -169,7 +79,7 @@ export class BlueprintPage {
         
         <div class="main-container">
             <div class="content-wrapper">
-						<h2 class="blueprint-title">${this.blueprints.title}</h2>
+                <h2 class="blueprint-title">${this.blueprints.title}</h2>
                 <div class="carousel-container" id="carousel-container"></div>
                 
                 <div class="details-card">
@@ -190,7 +100,6 @@ export class BlueprintPage {
                             <span>Сумма квадратов площадей объектов:</span>
                             <strong>${this.calculateTotalSquaredArea()}</strong>
                         </div>
-                                                
                         <div class="analytics-item">
                             <span>Диапазоны координат объектов:</span>
                             <strong>${this.getDimensionRanges()}</strong>
@@ -209,6 +118,7 @@ export class BlueprintPage {
         </div>
     </div>`
 	}
+
 	calculateAverageElementSize() {
 		let totalDimensionsSum = 0
 		for (const element of this.blueprintElements) {
@@ -228,46 +138,31 @@ export class BlueprintPage {
 			uniqueCoordinates.add(element.position.y)
 		}
 
-		const sortedCoordinates = Array.from(uniqueCoordinates)
-
-		sortedCoordinates.sort((a, b) => a - b)
+		const sortedCoordinates = Array.from(uniqueCoordinates).sort(
+			(a, b) => a - b
+		)
 
 		const coordinateRanges = []
-
 		let rangeStart = sortedCoordinates[0]
 
 		for (let i = 1; i < sortedCoordinates.length; i++) {
 			if (sortedCoordinates[i] - sortedCoordinates[i - 1] !== 1) {
-				let range
-				if (rangeStart === sortedCoordinates[i - 1]) {
-					range = `${rangeStart}`
-				} else {
-					range = `${rangeStart}-${sortedCoordinates[i - 1]}`
-				}
+				const range =
+					rangeStart === sortedCoordinates[i - 1]
+						? `${rangeStart}`
+						: `${rangeStart}-${sortedCoordinates[i - 1]}`
 				coordinateRanges.push(range)
 				rangeStart = sortedCoordinates[i]
 			}
 		}
 
-		let lastRange
-		if (rangeStart === sortedCoordinates[sortedCoordinates.length - 1]) {
-			lastRange = `${rangeStart}`
-		} else {
-			lastRange = `${rangeStart}-${
-				sortedCoordinates[sortedCoordinates.length - 1]
-			}`
-		}
+		const lastRange =
+			rangeStart === sortedCoordinates[sortedCoordinates.length - 1]
+				? `${rangeStart}`
+				: `${rangeStart}-${sortedCoordinates[sortedCoordinates.length - 1]}`
 		coordinateRanges.push(lastRange)
 
-		let resultString = ''
-		for (let i = 0; i < coordinateRanges.length; i++) {
-			if (i > 0) {
-				resultString += ', '
-			}
-			resultString += coordinateRanges[i]
-		}
-
-		return resultString
+		return coordinateRanges.join(', ')
 	}
 
 	calculateTotalSquaredArea() {
@@ -281,23 +176,16 @@ export class BlueprintPage {
 
 	findElementAnagrams() {
 		const anagramGroups = new Map()
-
 		const elements = this.blueprintElements.slice()
 
 		while (elements.length > 0) {
 			const element = elements.shift()
-			const name = element.name
+			const name = element.name.toLowerCase().split('').sort().join('')
 
-			const lowerCaseName = name.toLowerCase()
-
-			const lettersArray = lowerCaseName.split('')
-			lettersArray.sort()
-			const sortedLetters = lettersArray.join('')
-
-			if (anagramGroups.has(sortedLetters)) {
-				anagramGroups.get(sortedLetters).push(name)
+			if (anagramGroups.has(name)) {
+				anagramGroups.get(name).push(element.name)
 			} else {
-				anagramGroups.set(sortedLetters, [name])
+				anagramGroups.set(name, [element.name])
 			}
 		}
 
@@ -308,25 +196,29 @@ export class BlueprintPage {
 				result.push(group)
 			}
 		}
+
 		result.sort((a, b) => a[0] < b[0])
 		result = result.map(group => group.join(' = '))
 
-		if (result.length > 0) {
-			return result.join(', ')
-		} else {
-			return 'Анаграммы не найдены'
-		}
+		return result.length > 0 ? result.join(', ') : 'Анаграммы не найдены'
 	}
 
+	handleEditBluePrint() {
+		const blueprintEditPage = new BlueprintEditPage(
+			this.parent,
+			'edit',
+			this.blueprints
+		)
+		blueprintEditPage.render()
+	}
 	clickBack() {
 		const mainPage = new MainPage(this.parent)
 		mainPage.render()
 	}
 
-	render() {
+	renderPageContent() {
 		this.parent.innerHTML = ''
-		const html = this.getHTML()
-		this.parent.insertAdjacentHTML('beforeend', html)
+		this.parent.insertAdjacentHTML('beforeend', this.getHTML())
 
 		const logo = document.querySelector('.logo-image')
 		if (logo) {
@@ -335,20 +227,17 @@ export class BlueprintPage {
 				new MainPage(this.parent).render()
 			})
 		}
-		const addButtonContainer = document.getElementById('add-button-container')
-		const addButton = new ButtonComponent(addButtonContainer, 'Добавить')
-		addButton.render(() => this.handleAddBluePrint())
 
 		const editButtonContainer = document.getElementById('edit-button-container')
 		const editButton = new ButtonComponent(editButtonContainer, 'Изменить')
 		editButton.render(() => this.handleEditBluePrint())
-		/*
-		const backButtonContainer = document.getElementById('back-button-container')
-		const backButton = new BackButtonComponent(backButtonContainer)
-		backButton.render(this.clickBack.bind(this))
-		*/
+
 		const carouselContainer = document.getElementById('carousel-container')
 		const carousel = new CaruselComponent(carouselContainer)
 		carousel.render(this.blueprints)
+	}
+
+	render() {
+		this.getBluePrints()
 	}
 }

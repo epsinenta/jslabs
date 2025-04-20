@@ -263,6 +263,55 @@ body {
 }
 
 .blueprint-title {
-	color: white;
 	text-align: center;
+}
+.custom-form-container {
+	max-width: 500px;
+	width: 100%;
+}
+
+.custom-input {
+	border-radius: 8px;
+	padding: 10px 15px;
+	transition: border-color 0.3s ease;
+}
+
+.custom-btn {
+	background-color: #00ace2;
+	color: #ffffff;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 8px;
+	transition: background-color 0.3s ease;
+}
+
+.custom-btn:hover {
+	color: #ffffff;
+	background-color: #4ac0f2;
+}
+
+.blueprint-title {
+	color: #ffffff;
+}
+.form-control {
+	background-color: #2a2e32;
+	color: #fff;
+	border: 1px solid #3d4348;
+	border-radius: 8px;
+	padding: 10px 14px;
+	font-size: 16px;
+	transition: border-color 0.3s ease, box-shadow 0.3s ease;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.form-control::placeholder {
+	color: #888888;
+	opacity: 1;
+}
+
+.form-control:focus {
+	background-color: #2a2e32;
+	color: #fff;
+	border-color: #4ac0f2;
 }

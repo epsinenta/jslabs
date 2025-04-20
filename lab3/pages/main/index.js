@@ -3,6 +3,8 @@ import { BlueprintPage } from '../blueprint/index.js'
 import ButtonComponent from '../../components/button/index.js'
 import { ajax } from '../../modules/ajax.js'
 import { blueprintUrls } from '../../modules/bluePrintUrls.js'
+import { BlueprintEditPage } from '../editor/index.js'
+
 export class MainPage {
 	constructor(parent) {
 		this.parent = parent
@@ -30,7 +32,6 @@ export class MainPage {
                     </div>
                     <div class="nav-buttons-container">
                         <div id="add-button-container" class="nav-button-wrapper"></div>
-                        <div id="edit-button-container" class="nav-button-wrapper"></div>
                     </div>
                 </div>
             </header>
@@ -48,20 +49,9 @@ export class MainPage {
         `
 	}
 	handleAddBluePrint() {
-		if (this.blueprints.length === 0) return
-
-		const firstBluePrint = JSON.parse(JSON.stringify(this.blueprints[0]))
-
-		const newBluePrint = {
-			...firstBluePrint,
-			id: this.generateNewId(),
-			title: `${firstBluePrint.title} (копия)`,
-		}
-
-		this.blueprints.push(newBluePrint)
-		this.renderBluePrint()
+		const blueprintEditPage = new BlueprintEditPage(this.parent, 'create')
+		blueprintEditPage.render()
 	}
-	handleEditBluePrint() {}
 	generateNewId() {
 		const ids = this.blueprints.map(item => item.id)
 		return ids.length > 0 ? Math.max(...ids) + 1 : 1
@@ -90,7 +80,7 @@ export class MainPage {
 			)
 		})
 	}
-	
+
 	clickBluePrint(blueprintId) {
 		const blueprintPage = new BlueprintPage(this.parent, blueprintId)
 		blueprintPage.render()
@@ -117,12 +107,7 @@ export class MainPage {
 		const addButton = new ButtonComponent(addButtonContainer, 'Добавить')
 		addButton.render(() => this.handleAddBluePrint())
 
-		const editButtonContainer = document.getElementById('edit-button-container')
-		const editButton = new ButtonComponent(editButtonContainer, 'Изменить')
-		editButton.render(() => this.handleEditBluePrint())
-
 		const searchInput = document.getElementById('search-input')
 		searchInput.addEventListener('input', e => this.handleSearchInput(e))
-		//this.renderBluePrint()
 	}
 }

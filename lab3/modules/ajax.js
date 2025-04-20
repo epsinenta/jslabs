@@ -15,7 +15,18 @@ class Ajax {
 			}
 		}
 	}
+	put(url, data, callback) {
+		const xhr = new XMLHttpRequest()
+		xhr.open('PUT', url)
+		xhr.setRequestHeader('Content-Type', 'application/json')
+		xhr.send(JSON.stringify(data))
 
+		xhr.onreadystatechange = () => {
+			if (xhr.readyState === 4) {
+				this._handleResponse(xhr, callback)
+			}
+		}
+	}
 	/**
 	 * POST запрос
 	 * @param {string} url - Адрес запроса
