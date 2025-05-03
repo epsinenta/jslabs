@@ -68,7 +68,7 @@ export class BlueprintPage {
         <header class="main-header">
             <div class="header-content">
                 <div class="logo-container">
-                    <img src="./static/images/logo.png" class="logo-image" alt="Логотип">
+                    <img src="./images/logo.png" class="logo-image" alt="Логотип">
                 </div>
                 <div class="nav-buttons-container">
                     <div id="add-button-container" class="nav-button-wrapper"></div>

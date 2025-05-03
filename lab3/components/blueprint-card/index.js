@@ -9,6 +9,7 @@ export class BlueprintCardComponent {
 	}
 
 	getHTML(data) {
+		console.log(data)
 		return `
     <div class="blueprint-card" data-id="${data.id}">
         <div class="card-body-custom">

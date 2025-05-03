@@ -23,7 +23,7 @@ export class BlueprintEditPage {
       <header class="main-header w-100">
         <div class="header-content d-flex justify-content-center p-3">
           <div class="logo-container">
-            <img src="./static/images/logo.png" class="logo-image" alt="Логотип">
+            <img src="./images/logo.png" class="logo-image" alt="Логотип">
           </div>
         </div>
       </header>
@@ -68,18 +68,12 @@ export class BlueprintEditPage {
 			.getElementById('src-input')
 			.value.split(',')
 			.map(e => e.trim())
-
+	
 		const data = { title, elements, src }
-
+	
 		if (this.mode === 'create') {
-			ajax.get(blueprintUrls.getBluePrints(), blueprints => {
-				const ids = blueprints.map(bp => bp.id)
-				const newId = ids.length > 0 ? Math.max(...ids) + 1 : 1
-				const blueprintWithId = { id: newId, ...data }
-
-				ajax.post(blueprintUrls.createBluePrint(), blueprintWithId, () => {
-					new MainPage(this.parent).render()
-				})
+			ajax.post(blueprintUrls.createBluePrint(), data, () => {
+				new MainPage(this.parent).render()
 			})
 		} else {
 			ajax.put(blueprintUrls.getBluePrintById(this.blueprint.id), data, () => {
