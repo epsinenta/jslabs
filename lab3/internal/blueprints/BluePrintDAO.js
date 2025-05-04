@@ -26,18 +26,6 @@ class BluePrintDAO {
 		}
 
 		this._validateId(blueprint.id)
-
-		blueprint.elements.forEach(element => {
-			if (
-				!element.type ||
-				typeof element.width !== 'number' ||
-				typeof element.height !== 'number' ||
-				!element.name ||
-				!element.position
-			) {
-				throw new Error('Invalid element structure')
-			}
-		})
 	}
 
 	static find(filters = {}) {
@@ -93,19 +81,33 @@ class BluePrintDAO {
 		)
 	}
 
-	static insert(blueprint) {
-		this._validate(blueprint)
-
+	static getNextId() {
 		const blueprints = BluePrintsRepository.read()
-		const updatedBlueprints = [...blueprints, blueprint]
-
-		BluePrintsRepository.write(updatedBlueprints)
-
+		if (blueprints.length === 0) return 1
+		const maxId = Math.max(...blueprints.map(bp => bp.id))
+		return maxId + 1
+	}
+	
+	static insert(blueprint) {
+		if (!blueprint.title || !Array.isArray(blueprint.elements) || !Array.isArray(blueprint.src)) {
+			throw new Error('Invalid blueprint structure')
+		}
+	
+		const blueprints = BluePrintsRepository.read()
+		const newBlueprint = {
+			id: this.getNextId(),  
+			title: blueprint.title,
+			elements: blueprint.elements,
+			src: blueprint.src
+		}
+	
+		BluePrintsRepository.write([...blueprints, newBlueprint])
+	
 		return new this(
-			blueprint.id,
-			blueprint.title,
-			blueprint.elements,
-			blueprint.src
+			newBlueprint.id,
+			newBlueprint.title,
+			newBlueprint.elements,
+			newBlueprint.src
 		)
 	}
 
