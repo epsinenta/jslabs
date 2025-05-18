@@ -36,14 +36,13 @@ export class MainPage {
                 </div>
             </header>
                 <div id="controls-container" class="p-3 d-flex gap-2 align-items-center">
-                    <input 
+                <input 
                     type="text" 
                     id="search-input" 
                     class="form-control" 
                     placeholder="Введите название чертежа"
                 >
-                    
-                </div>
+            </div>
                 <div id="main-page" class="d-flex flex-wrap gap-3 p-3" style="background-color: #101214;"></div>
             </div>
         `
@@ -57,6 +56,23 @@ export class MainPage {
 		return ids.length > 0 ? Math.max(...ids) + 1 : 1
 	}
 
+	handleSearch() {
+		const searchInput = document.getElementById('search-input')
+		if (!searchInput) {
+			console.error('Search input not found!')
+			return
+		}
+
+		this.searchQuery = searchInput.value.toLowerCase().trim()
+		console.log(this.searchQuery)
+		const query = this.searchQuery
+			? `?title=${encodeURIComponent(this.searchQuery)}`
+			: ''
+	
+		ajax.get(`${blueprintUrls.getBluePrints()}${query}`, data => {
+			this.renderData(data)
+		})
+	}
 	handleSearchInput(event) {
 		this.searchQuery = event.target.value.toLowerCase().trim()
 
@@ -106,8 +122,13 @@ export class MainPage {
 		const addButtonContainer = document.getElementById('add-button-container')
 		const addButton = new ButtonComponent(addButtonContainer, 'Добавить')
 		addButton.render(() => this.handleAddBluePrint())
-
+		
 		const searchInput = document.getElementById('search-input')
-		searchInput.addEventListener('input', e => this.handleSearchInput(e))
+		searchInput.addEventListener('keypress', (e) => {
+			if (e.key === 'Enter') {
+				this.handleSearch()
+			}
+		})
+		
 	}
 }
